@@ -1,0 +1,17 @@
+[
+  { "airport_id": "DEL", "iata": "DEL", "city": "Delhi", "country": "India", "latitude": 28.5562, "longitude": 77.1000, "timezone": "Asia/Kolkata" },
+  { "airport_id": "BOM", "iata": "BOM", "city": "Mumbai", "country": "India", "latitude": 19.0896, "longitude": 72.8656, "timezone": "Asia/Kolkata" },
+  { "airport_id": "BLR", "iata": "BLR", "city": "Bengaluru", "country": "India", "latitude": 13.1986, "longitude": 77.7066, "timezone": "Asia/Kolkata" },
+  { "airport_id": "VNS", "iata": "VNS", "city": "Varanasi", "country": "India", "latitude": 25.4524, "longitude": 82.8593, "timezone": "Asia/Kolkata" },
+  { "airport_id": "GOI", "iata": "GOI", "city": "Goa", "country": "India", "latitude": 15.3808, "longitude": 73.8314, "timezone": "Asia/Kolkata" },
+  { "airport_id": "COK", "iata": "COK", "city": "Kochi", "country": "India", "latitude": 10.1520, "longitude": 76.4019, "timezone": "Asia/Kolkata" },
+  { "airport_id": "HYD", "iata": "HYD", "city": "Hyderabad", "country": "India", "latitude": 17.2403, "longitude": 78.4294, "timezone": "Asia/Kolkata" },
+  { "airport_id": "CCU", "iata": "CCU", "city": "Kolkata", "country": "India", "latitude": 22.6547, "longitude": 88.4467, "timezone": "Asia/Kolkata" },
+  { "airport_id": "IXC", "iata": "IXC", "city": "Chandigarh", "country": "India", "latitude": 30.6735, "longitude": 76.7885, "timezone": "Asia/Kolkata" },
+  { "airport_id": "DXB", "iata": "DXB", "city": "Dubai", "country": "UAE", "latitude": 25.2532, "longitude": 55.3657, "timezone": "Asia/Dubai" },
+  { "airport_id": "SIN", "iata": "SIN", "city": "Singapore", "country": "Singapore", "latitude": 1.3644, "longitude": 103.9915, "timezone": "Asia/Singapore" },
+  { "airport_id": "BKK", "iata": "BKK", "city": "Bangkok", "country": "Thailand", "latitude": 13.6900, "longitude": 100.7501, "timezone": "Asia/Bangkok" },
+  { "airport_id": "CDG", "iata": "CDG", "city": "Paris", "country": "France", "latitude": 49.0097, "longitude": 2.5479, "timezone": "Europe/Paris" },
+  { "airport_id": "AMS", "iata": "AMS", "city": "Amsterdam", "country": "Netherlands", "latitude": 52.3105, "longitude": 4.7683, "timezone": "Europe/Amsterdam" },
+  { "airport_id": "IXZ", "iata": "IXZ", "city": "Port Blair", "country": "India", "latitude": 11.6410, "longitude": 92.7297, "timezone": "Asia/Kolkata", "note": "deliberately disconnected - no flights reference this airport, used to test disconnected-node handling" }
+]

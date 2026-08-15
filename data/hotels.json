@@ -1,0 +1,644 @@
+[
+  {
+    "hotel_id": "HT0001",
+    "city": "Delhi",
+    "name": "Airport Transit Inn",
+    "price_per_night_inr": 1800,
+    "rating": 3.4,
+    "distance_from_airport_km": 2.1,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0002",
+    "city": "Delhi",
+    "name": "Delhi Central Suites",
+    "price_per_night_inr": 4200,
+    "rating": 4.1,
+    "distance_from_airport_km": 8.5,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0003",
+    "city": "Delhi",
+    "name": "The Grand Capital",
+    "price_per_night_inr": 11500,
+    "rating": 4.7,
+    "distance_from_airport_km": 12.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0004",
+    "city": "Mumbai",
+    "name": "Andheri Stopover",
+    "price_per_night_inr": 2000,
+    "rating": 3.6,
+    "distance_from_airport_km": 3.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0005",
+    "city": "Mumbai",
+    "name": "Bandra Bay Hotel",
+    "price_per_night_inr": 5200,
+    "rating": 4.3,
+    "distance_from_airport_km": 9.2,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0006",
+    "city": "Mumbai",
+    "name": "Marine Vista Palace",
+    "price_per_night_inr": 14000,
+    "rating": 4.8,
+    "distance_from_airport_km": 14.5,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0007",
+    "city": "Varanasi",
+    "name": "Ganga View Lodge",
+    "price_per_night_inr": 1500,
+    "rating": 3.8,
+    "distance_from_airport_km": 6.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0008",
+    "city": "Varanasi",
+    "name": "Kashi Heritage Hotel",
+    "price_per_night_inr": 3600,
+    "rating": 4.2,
+    "distance_from_airport_km": 4.5,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0009",
+    "city": "Varanasi",
+    "name": "Riverside Regency",
+    "price_per_night_inr": 9000,
+    "rating": 4.6,
+    "distance_from_airport_km": 5.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0010",
+    "city": "Goa",
+    "name": "Beachside Backpackers",
+    "price_per_night_inr": 1700,
+    "rating": 3.9,
+    "distance_from_airport_km": 5.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0011",
+    "city": "Goa",
+    "name": "Candolim Comfort Inn",
+    "price_per_night_inr": 4800,
+    "rating": 4.4,
+    "distance_from_airport_km": 7.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0012",
+    "city": "Goa",
+    "name": "Palm Grove Resort",
+    "price_per_night_inr": 13500,
+    "rating": 4.7,
+    "distance_from_airport_km": 9.5,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "pool",
+      "beach access"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0013",
+    "city": "Bengaluru",
+    "name": "Whitefield Budget Stay",
+    "price_per_night_inr": 1900,
+    "rating": 3.5,
+    "distance_from_airport_km": 15.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0014",
+    "city": "Bengaluru",
+    "name": "MG Road Business Hotel",
+    "price_per_night_inr": 4600,
+    "rating": 4.2,
+    "distance_from_airport_km": 10.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0015",
+    "city": "Bengaluru",
+    "name": "Garden City Grand",
+    "price_per_night_inr": 10800,
+    "rating": 4.6,
+    "distance_from_airport_km": 12.5,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0016",
+    "city": "Kochi",
+    "name": "Backwater Budget Inn",
+    "price_per_night_inr": 1600,
+    "rating": 3.7,
+    "distance_from_airport_km": 4.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0017",
+    "city": "Kochi",
+    "name": "Fort Kochi Suites",
+    "price_per_night_inr": 4000,
+    "rating": 4.3,
+    "distance_from_airport_km": 8.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0018",
+    "city": "Kochi",
+    "name": "Malabar Coast Resort",
+    "price_per_night_inr": 9800,
+    "rating": 4.6,
+    "distance_from_airport_km": 6.5,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0019",
+    "city": "Hyderabad",
+    "name": "HITEC Transit Rooms",
+    "price_per_night_inr": 1750,
+    "rating": 3.5,
+    "distance_from_airport_km": 5.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0020",
+    "city": "Hyderabad",
+    "name": "Charminar Comfort",
+    "price_per_night_inr": 4100,
+    "rating": 4.1,
+    "distance_from_airport_km": 9.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0021",
+    "city": "Hyderabad",
+    "name": "Nizam Grand Palace",
+    "price_per_night_inr": 10200,
+    "rating": 4.6,
+    "distance_from_airport_km": 11.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0022",
+    "city": "Kolkata",
+    "name": "Howrah Budget Stay",
+    "price_per_night_inr": 1650,
+    "rating": 3.4,
+    "distance_from_airport_km": 4.5,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0023",
+    "city": "Kolkata",
+    "name": "Park Street Residency",
+    "price_per_night_inr": 3900,
+    "rating": 4.0,
+    "distance_from_airport_km": 7.5,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0024",
+    "city": "Kolkata",
+    "name": "Victoria Grand Hotel",
+    "price_per_night_inr": 9500,
+    "rating": 4.5,
+    "distance_from_airport_km": 10.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0025",
+    "city": "Chandigarh",
+    "name": "Sector 17 Inn",
+    "price_per_night_inr": 1500,
+    "rating": 3.6,
+    "distance_from_airport_km": 3.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0026",
+    "city": "Chandigarh",
+    "name": "Rock Garden Hotel",
+    "price_per_night_inr": 3500,
+    "rating": 4.1,
+    "distance_from_airport_km": 6.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0027",
+    "city": "Dubai",
+    "name": "Deira Budget Rooms",
+    "price_per_night_inr": 5500,
+    "rating": 3.6,
+    "distance_from_airport_km": 6.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0028",
+    "city": "Dubai",
+    "name": "Downtown Comfort Suites",
+    "price_per_night_inr": 12000,
+    "rating": 4.3,
+    "distance_from_airport_km": 10.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0029",
+    "city": "Dubai",
+    "name": "Burj View Palace",
+    "price_per_night_inr": 32000,
+    "rating": 4.8,
+    "distance_from_airport_km": 15.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0030",
+    "city": "Singapore",
+    "name": "Chinatown Budget Stay",
+    "price_per_night_inr": 6200,
+    "rating": 3.7,
+    "distance_from_airport_km": 18.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0031",
+    "city": "Singapore",
+    "name": "Marina Bay Comfort",
+    "price_per_night_inr": 15500,
+    "rating": 4.4,
+    "distance_from_airport_km": 20.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0032",
+    "city": "Singapore",
+    "name": "Sands Grand Suites",
+    "price_per_night_inr": 38000,
+    "rating": 4.9,
+    "distance_from_airport_km": 21.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "gym",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0033",
+    "city": "Bangkok",
+    "name": "Sukhumvit Budget Inn",
+    "price_per_night_inr": 3200,
+    "rating": 3.5,
+    "distance_from_airport_km": 25.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0034",
+    "city": "Bangkok",
+    "name": "Riverside Comfort Hotel",
+    "price_per_night_inr": 7800,
+    "rating": 4.2,
+    "distance_from_airport_km": 30.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0035",
+    "city": "Bangkok",
+    "name": "Grand Palace Resort",
+    "price_per_night_inr": 18000,
+    "rating": 4.7,
+    "distance_from_airport_km": 28.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "pool"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0036",
+    "city": "Paris",
+    "name": "Gare du Nord Budget",
+    "price_per_night_inr": 9500,
+    "rating": 3.6,
+    "distance_from_airport_km": 26.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0037",
+    "city": "Paris",
+    "name": "Le Marais Comfort",
+    "price_per_night_inr": 21000,
+    "rating": 4.3,
+    "distance_from_airport_km": 30.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0038",
+    "city": "Paris",
+    "name": "Champs-Elysees Grand",
+    "price_per_night_inr": 48000,
+    "rating": 4.8,
+    "distance_from_airport_km": 33.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0039",
+    "city": "Amsterdam",
+    "name": "Canal Budget Stay",
+    "price_per_night_inr": 8800,
+    "rating": 3.7,
+    "distance_from_airport_km": 12.0,
+    "category": "budget",
+    "amenities": [
+      "wifi"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0040",
+    "city": "Amsterdam",
+    "name": "Jordaan Comfort Hotel",
+    "price_per_night_inr": 19500,
+    "rating": 4.4,
+    "distance_from_airport_km": 15.0,
+    "category": "mid",
+    "amenities": [
+      "wifi",
+      "breakfast"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  },
+  {
+    "hotel_id": "HT0041",
+    "city": "Amsterdam",
+    "name": "Museumplein Grand",
+    "price_per_night_inr": 42000,
+    "rating": 4.7,
+    "distance_from_airport_km": 17.0,
+    "category": "luxury",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "spa",
+      "gym"
+    ],
+    "source": "seed",
+    "retrieved_at": "2026-08-15T00:00:00Z"
+  }
+]

@@ -1,26 +1,25 @@
 #include <iostream>
 #include "graph.h"
 #include "dijkstra.h"
+using namespace std;
 
 int main() {
-    std::cout << "Travel Optimization Engine - C++ core\n";
-    std::cout << "This compiles, which means your toolchain (g++, Makefile) works.\n";
-    std::cout << "Next: implement Graph::loadAirports/loadFlights in src/graph.cpp,\n";
-    std::cout << "then implement dijkstra() in src/dijkstra.cpp.\n";
+    Graph g;
+    g.loadAirports("../data/airports.json");
+    g.loadFlights("../data/flights.json");
 
-    // Once graph.cpp is implemented, this becomes your first real test:
-    //
-    // Graph g;
-    // g.loadAirports("../data/airports.json");
-    // g.loadFlights("../data/flights.json");
-    // std::cout << "Loaded " << g.numAirports() << " airports\n";
-    //
-    // PathResult result = dijkstra(g, "VNS", "DEL", WeightType::PRICE);
-    // if (result.found) {
-    //     std::cout << "Cheapest VNS->DEL: " << result.totalCost << " INR\n";
-    // } else {
-    //     std::cout << "No path found\n";
-    // }
+    cout << "Loaded " << g.numAirports() << " airports" << endl;
+
+    cout << "Has VNS? " << g.hasAirport("VNS") << endl;
+    cout << "Has IXZ (disconnected)? " << g.hasAirport("IXZ") << endl;
+    cout << "Has FAKE? " << g.hasAirport("FAKE") << endl;
+
+    auto edges = g.getEdges("VNS");
+    cout << "VNS has " << edges.size() << " outgoing flights:" << endl;
+    for (auto& e : edges) {
+        cout << "  " << e.flight_id << " -> " << e.destination
+             << " (Rs " << e.price_inr << ", " << e.duration_minutes << " min)" << endl;
+    }
 
     return 0;
 }

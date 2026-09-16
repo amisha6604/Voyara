@@ -21,5 +21,22 @@ int main() {
              << " (Rs " << e.price_inr << ", " << e.duration_minutes << " min)" << endl;
     }
 
+    auto result = dijkstra(g, "VNS", "BLR", WeightType::PRICE);
+   
+    if (result.found) {
+        cout << "Found path from VNS to BLR with total cost Rs " << result.totalCost << endl;
+        cout << "Path: ";
+        for (const auto& airport : result.path) {
+            cout << airport << " ";
+        }
+        cout << endl;
+        cout << "Flights: ";
+        for (auto& flight : result.flightIds) {
+            cout << flight << " ";
+        }
+        cout << endl;
+    } else {
+        cout << "No path found from VNS to BLR" << endl;
+    }       
     return 0;
 }

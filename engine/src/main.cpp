@@ -1,42 +1,57 @@
 #include <iostream>
+#include <string>
 #include "graph.h"
 #include "dijkstra.h"
+#include "json.hpp"
+
 using namespace std;
+using json = nlohmann::json;
 
 int main() {
     Graph g;
     g.loadAirports("../data/airports.json");
     g.loadFlights("../data/flights.json");
 
-    cout << "Loaded " << g.numAirports() << " airports" << endl;
+    // Read JSON request from stdin
+    string input;
+    getline(cin, input);
 
-    cout << "Has VNS? " << g.hasAirport("VNS") << endl;
-    cout << "Has IXZ (disconnected)? " << g.hasAirport("IXZ") << endl;
-    cout << "Has FAKE? " << g.hasAirport("FAKE") << endl;
+    // Parse JSON
+    json request = json::parse(input);
 
-    auto edges = g.getEdges("VNS");
-    cout << "VNS has " << edges.size() << " outgoing flights:" << endl;
-    for (auto& e : edges) {
-        cout << "  " << e.flight_id << " -> " << e.destination
-             << " (Rs " << e.price_inr << ", " << e.duration_minutes << " min)" << endl;
+    // Extract values
+    string origin = request["origin"];
+    string destination = request["destination"];
+    string weightType = request["weightType"];
+
+    // Convert string to WeightType enum
+    WeightType weight;
+
+    if (weightType == "PRICE") {
+        weight = WeightType::PRICE;
+    } else {
+        weight = WeightType::DURATION;
     }
 
-    auto result = dijkstra(g, "VNS", "BLR", WeightType::PRICE);
+    
+
+    
+
+    auto result = dijkstra(g, origin, destination, weight);
    
-    if (result.found) {
-        cout << "Found path from VNS to BLR with total cost Rs " << result.totalCost << endl;
-        cout << "Path: ";
-        for (const auto& airport : result.path) {
-            cout << airport << " ";
-        }
-        cout << endl;
-        cout << "Flights: ";
-        for (auto& flight : result.flightIds) {
-            cout << flight << " ";
-        }
-        cout << endl;
-    } else {
-        cout << "No path found from VNS to BLR" << endl;
-    }       
+    json response;
+
+response["found"] = result.found;
+
+if (result.found) {
+    response["totalCost"] = result.totalCost;
+    response["path"] = result.path;
+    response["flightIds"] = result.flightIds;
+}
+
+response["nodesExplored"] = result.nodesExplored;
+response["runtimeMs"] = result.runtimeMs;
+
+cout << response.dump() << endl;    
     return 0;
 }

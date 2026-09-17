@@ -1,12 +1,64 @@
 // server/src/index.js
 const express = require('express');
 const { callEngine } = require('./engineBridge');
+const { query } = require('./db');
 
 const app = express();
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.get('/api/flights', async (req, res) => {
+  const { origin, destination } = req.query;
+
+  if (!origin || !destination) {
+    return res.status(400).json({
+      error: 'origin and destination are required'
+    });
+  }
+
+  try {
+    const result = await query(
+      `
+      SELECT
+        f.flight_id,
+        ao.iata AS origin,
+        ad.iata AS destination,
+        al.name AS airline,
+        f.departure_at,
+        f.arrival_at,
+        f.duration_minutes,
+        f.price_inr,
+        f.status
+      FROM flights f
+      JOIN airports ao
+        ON f.origin_airport = ao.airport_id
+      JOIN airports ad
+        ON f.destination_airport = ad.airport_id
+      JOIN airlines al
+        ON f.airline_id = al.airline_id
+      WHERE ao.iata = $1
+        AND ad.iata = $2
+        AND f.status = 'active'
+      ORDER BY f.departure_at;
+      `,
+      [origin.toUpperCase(), destination.toUpperCase()]
+    );
+
+    res.json({
+      count: result.rows.length,
+      flights: result.rows
+    });
+
+  } catch (err) {
+    console.error('Flight query failed:', err.message);
+
+    res.status(500).json({
+      error: 'Failed to fetch flights'
+    });
+  }
 });
 
 // First real endpoint: a direct pass-through to the engine's shortest-path

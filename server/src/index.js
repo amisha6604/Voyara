@@ -1,98 +1,171 @@
-// server/src/index.js
 const express = require('express');
 const { callEngine } = require('./engineBridge');
 const { query } = require('./db');
 
 const app = express();
+
 app.use(express.json());
 
+
+// --------------------------------------------------
+// Health check
+// --------------------------------------------------
+
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+    res.json({ status: 'ok' });
 });
+
+
+// --------------------------------------------------
+// Get flights directly from PostgreSQL
+// --------------------------------------------------
 
 app.get('/api/flights', async (req, res) => {
-  const { origin, destination } = req.query;
 
-  if (!origin || !destination) {
-    return res.status(400).json({
-      error: 'origin and destination are required'
-    });
-  }
+    const { origin, destination } = req.query;
 
-  try {
-    const result = await query(
-      `
-      SELECT
-        f.flight_id,
-        ao.iata AS origin,
-        ad.iata AS destination,
-        al.name AS airline,
-        f.departure_at,
-        f.arrival_at,
-        f.duration_minutes,
-        f.price_inr,
-        f.status
-      FROM flights f
-      JOIN airports ao
-        ON f.origin_airport = ao.airport_id
-      JOIN airports ad
-        ON f.destination_airport = ad.airport_id
-      JOIN airlines al
-        ON f.airline_id = al.airline_id
-      WHERE ao.iata = $1
-        AND ad.iata = $2
-        AND f.status = 'active'
-      ORDER BY f.departure_at;
-      `,
-      [origin.toUpperCase(), destination.toUpperCase()]
-    );
+    if (!origin || !destination) {
+        return res.status(400).json({
+            error: 'origin and destination are required'
+        });
+    }
 
-    res.json({
-      count: result.rows.length,
-      flights: result.rows
-    });
+    try {
 
-  } catch (err) {
-    console.error('Flight query failed:', err.message);
+        const result = await query(
+            `
+            SELECT
+                f.flight_id,
+                ao.iata AS origin,
+                ad.iata AS destination,
+                al.name AS airline,
+                f.departure_at,
+                f.arrival_at,
+                f.duration_minutes,
+                f.price_inr,
+                f.status
+            FROM flights f
+            JOIN airports ao
+                ON f.origin_airport = ao.airport_id
+            JOIN airports ad
+                ON f.destination_airport = ad.airport_id
+            JOIN airlines al
+                ON f.airline_id = al.airline_id
+            WHERE ao.iata = $1
+              AND ad.iata = $2
+              AND f.status = 'active'
+            ORDER BY f.departure_at;
+            `,
+            [
+                origin.toUpperCase(),
+                destination.toUpperCase()
+            ]
+        );
 
-    res.status(500).json({
-      error: 'Failed to fetch flights'
-    });
-  }
+        res.json({
+            count: result.rows.length,
+            flights: result.rows
+        });
+
+    } catch (err) {
+
+        console.error('Database error:', err);
+
+        res.status(500).json({
+            error: 'Failed to fetch flights',
+            detail: err.message
+        });
+    }
 });
 
-// First real endpoint: a direct pass-through to the engine's shortest-path
-// command, so you can verify the whole chain (React later -> Express -> C++
-// -> Express -> React) works before building the full optimize/itinerary
-// pipeline on top of it.
-//
-// Once engine/src/main.cpp reads stdin JSON and calls dijkstra() (your TODO),
-// this endpoint should work end-to-end:
-//   curl -X POST localhost:3001/api/route \
-//     -H "Content-Type: application/json" \
-//     -d '{"origin":"VNS","destination":"DEL","weightType":"PRICE"}'
+
+// --------------------------------------------------
+// Route optimization
+// PostgreSQL → Node → C++
+// --------------------------------------------------
+
 app.post('/api/route', async (req, res) => {
-  const { origin, destination, weightType } = req.body;
 
-  if (!origin || !destination) {
-    return res.status(400).json({ error: 'origin and destination are required' });
-  }
+    const {
+        origin,
+        destination,
+        weightType
+    } = req.body;
 
-  try {
-    const result = await callEngine({
-      command: 'shortest_path',
-      origin,
-      destination,
-      weightType: weightType || 'PRICE'
-    });
-    res.json(result);
-  } catch (err) {
-    // Never fabricate a result if the engine fails — spec Section 18/26 rule.
-    res.status(502).json({ error: 'Engine call failed', detail: err.message });
-  }
+    if (!origin || !destination) {
+        return res.status(400).json({
+            error: 'origin and destination are required'
+        });
+    }
+
+    try {
+
+        // 1. Fetch flight data from PostgreSQL
+        const flightResult = await query(
+            `
+            SELECT
+                f.flight_id,
+                ao.iata AS origin,
+                ad.iata AS destination,
+                al.name AS airline,
+                f.departure_at,
+                f.arrival_at,
+                f.duration_minutes,
+                f.price_inr,
+                f.status
+            FROM flights f
+JOIN airports ao
+    ON f.origin_airport = ao.airport_id
+JOIN airports ad
+    ON f.destination_airport = ad.airport_id
+JOIN airlines al
+    ON f.airline_id = al.airline_id
+WHERE f.status = 'active'
+            ORDER BY f.departure_at;
+            `
+        );
+
+
+        // 2. Convert PostgreSQL rows into engine input
+        const flights = flightResult.rows.map(flight => ({
+            flight_id: String(flight.flight_id),
+            origin: flight.origin,
+            destination: flight.destination,
+            airline: flight.airline,
+            departure: flight.departure_at,
+            arrival: flight.arrival_at,
+            price_inr: flight.price_inr,
+            duration_minutes: flight.duration_minutes
+        }));
+
+
+        // 3. Send the database data to C++
+        const result = await callEngine({
+            command: 'shortest_path',
+            origin: origin.toUpperCase(),
+            destination: destination.toUpperCase(),
+            weightType: weightType || 'PRICE',
+            flights
+        });
+
+
+        // 4. Return C++ result to client
+        res.json(result);
+
+    } catch (err) {
+
+        console.error('Route optimization error:', err);
+
+        res.status(502).json({
+            error: 'Route optimization failed',
+            detail: err.message
+        });
+    }
 });
+
 
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
-  console.log(`Travel Optimizer API listening on port ${PORT}`);
+    console.log(`Travel Optimizer API listening on port ${PORT}`);
 });

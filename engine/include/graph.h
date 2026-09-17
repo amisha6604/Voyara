@@ -35,6 +35,9 @@ public:
     // Each flight becomes one directed edge: adjacency[origin].push_back(edge)
     void loadFlights(const std::string& filepath);
 
+    void addAirport(const Airport& airport);
+
+    void addFlight(const std::string& origin, const Edge& edge);
     // TODO: return the list of outgoing edges for a given airport_id.
     // Return an empty vector if the airport has no outgoing flights
     // (this is how the disconnected-node case, e.g. IXZ, should behave —

@@ -52,3 +52,11 @@ const std:: vector<Edge> &Graph :: getEdges(const std::string& airport_id) const
 bool Graph ::hasAirport(const std::string& airport_id) const{
     return airports.find(airport_id)==airports.end()?false:true;
 }
+
+void Graph::addAirport(const Airport& airport) {
+    airports[airport.airport_id] = airport;
+}
+
+void Graph::addFlight(const std::string& origin, const Edge& edge) {
+    adjacency[origin].push_back(edge);
+}

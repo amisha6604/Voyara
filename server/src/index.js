@@ -108,8 +108,8 @@ app.post('/api/route', async (req, res) => {
                 ao.iata AS origin,
                 ad.iata AS destination,
                 al.name AS airline,
-                f.departure_at,
-                f.arrival_at,
+                TO_CHAR(f.departure_at, 'YYYY-MM-DD"T"HH24:MI:SS') AS departure,
+TO_CHAR(f.arrival_at, 'YYYY-MM-DD"T"HH24:MI:SS') AS arrival,
                 f.duration_minutes,
                 f.price_inr,
                 f.status
@@ -132,8 +132,8 @@ WHERE f.status = 'active'
             origin: flight.origin,
             destination: flight.destination,
             airline: flight.airline,
-            departure: flight.departure_at,
-            arrival: flight.arrival_at,
+            departure: flight.departure,
+            arrival: flight.arrival,
             price_inr: flight.price_inr,
             duration_minutes: flight.duration_minutes
         }));

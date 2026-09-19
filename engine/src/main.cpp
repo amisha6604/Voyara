@@ -83,6 +83,9 @@ int main() {
 
 edge.flight_id = flightId;
 edge.destination = flightDestination;
+edge.airline = flight.value("airline", "");
+edge.departure = flight.value("departure", "");
+edge.arrival = flight.value("arrival", "");
 edge.price_inr = static_cast<int>(price);
 edge.duration_minutes = static_cast<int>(duration);
 

@@ -82,6 +82,12 @@ app.get('/api/flights', async (req, res) => {
 // --------------------------------------------------
 // Route optimization
 // PostgreSQL → Node → C++
+//
+// Supports:
+// - PRICE / DURATION optimization
+// - Maximum budget
+// - Maximum stops
+// - Maximum travel time
 // --------------------------------------------------
 
 app.post('/api/route', async (req, res) => {
@@ -89,7 +95,8 @@ app.post('/api/route', async (req, res) => {
     const {
         origin,
         destination,
-        weightType
+        weightType,
+        constraints = {}
     } = req.body;
 
     if (!origin || !destination) {
@@ -100,7 +107,10 @@ app.post('/api/route', async (req, res) => {
 
     try {
 
+        // --------------------------------------------------
         // 1. Fetch flight data from PostgreSQL
+        // --------------------------------------------------
+
         const flightResult = await query(
             `
             SELECT
@@ -108,25 +118,34 @@ app.post('/api/route', async (req, res) => {
                 ao.iata AS origin,
                 ad.iata AS destination,
                 al.name AS airline,
-                TO_CHAR(f.departure_at, 'YYYY-MM-DD"T"HH24:MI:SS') AS departure,
-TO_CHAR(f.arrival_at, 'YYYY-MM-DD"T"HH24:MI:SS') AS arrival,
+                TO_CHAR(
+                    f.departure_at,
+                    'YYYY-MM-DD"T"HH24:MI:SS'
+                ) AS departure,
+                TO_CHAR(
+                    f.arrival_at,
+                    'YYYY-MM-DD"T"HH24:MI:SS'
+                ) AS arrival,
                 f.duration_minutes,
                 f.price_inr,
                 f.status
             FROM flights f
-JOIN airports ao
-    ON f.origin_airport = ao.airport_id
-JOIN airports ad
-    ON f.destination_airport = ad.airport_id
-JOIN airlines al
-    ON f.airline_id = al.airline_id
-WHERE f.status = 'active'
+            JOIN airports ao
+                ON f.origin_airport = ao.airport_id
+            JOIN airports ad
+                ON f.destination_airport = ad.airport_id
+            JOIN airlines al
+                ON f.airline_id = al.airline_id
+            WHERE f.status = 'active'
             ORDER BY f.departure_at;
             `
         );
 
 
+        // --------------------------------------------------
         // 2. Convert PostgreSQL rows into engine input
+        // --------------------------------------------------
+
         const flights = flightResult.rows.map(flight => ({
             flight_id: String(flight.flight_id),
             origin: flight.origin,
@@ -139,22 +158,43 @@ WHERE f.status = 'active'
         }));
 
 
-        // 3. Send the database data to C++
+        // --------------------------------------------------
+        // 3. Send database data + constraints to C++
+        // --------------------------------------------------
+
         const result = await callEngine({
             command: 'shortest_path',
             origin: origin.toUpperCase(),
             destination: destination.toUpperCase(),
             weightType: weightType || 'PRICE',
+
+            constraints: {
+                maxBudget:
+                    constraints.maxBudget ?? -1,
+
+                maxStops:
+                    constraints.maxStops ?? -1,
+
+                maxTravelTimeMinutes:
+                    constraints.maxTravelTimeMinutes ?? -1
+            },
+
             flights
         });
 
 
+        // --------------------------------------------------
         // 4. Return C++ result to client
+        // --------------------------------------------------
+
         res.json(result);
 
     } catch (err) {
 
-        console.error('Route optimization error:', err);
+        console.error(
+            'Route optimization error:',
+            err
+        );
 
         res.status(502).json({
             error: 'Route optimization failed',
@@ -167,5 +207,7 @@ WHERE f.status = 'active'
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-    console.log(`Travel Optimizer API listening on port ${PORT}`);
+    console.log(
+        `Travel Optimizer API listening on port ${PORT}`
+    );
 });

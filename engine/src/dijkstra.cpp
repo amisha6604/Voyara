@@ -14,10 +14,7 @@ namespace {
 
 constexpr long long MIN_CONNECTION_MINUTES = 60;
 
-// Convert YYYY-MM-DD to a day number.
-// This is timezone-independent and works for comparing local airport times.
 long long daysFromCivil(int year, unsigned month, unsigned day) {
-
     year -= (month <= 2);
 
     const long long era =
@@ -38,30 +35,20 @@ long long daysFromCivil(int year, unsigned month, unsigned day) {
         - yearOfEra / 100
         + dayOfYear;
 
-    return era * 146097
-         + static_cast<long long>(dayOfEra);
+    return era * 146097 + static_cast<long long>(dayOfEra);
 }
 
-
-// Parse:
-// YYYY-MM-DDTHH:MM:SS
-//
-// We deliberately do NOT apply a timezone.
-// These timestamps represent local airport times.
 long long parseTimestamp(const string& timestamp) {
-
     if (timestamp.size() < 19) {
         return -1;
     }
 
     try {
-
         int year = stoi(timestamp.substr(0, 4));
         int month = stoi(timestamp.substr(5, 2));
         int day = stoi(timestamp.substr(8, 2));
         int hour = stoi(timestamp.substr(11, 2));
         int minute = stoi(timestamp.substr(14, 2));
-        
 
         long long days =
             daysFromCivil(
@@ -70,45 +57,36 @@ long long parseTimestamp(const string& timestamp) {
                 static_cast<unsigned>(day)
             );
 
-        return days * 24 * 60
-             + hour * 60
-             + minute;
-
-    } catch (...) {
+        return days * 24 * 60 + hour * 60 + minute;
+    }
+    catch (...) {
         return -1;
     }
 }
 
-
 struct Label {
-
     string airport;
 
     double cost = 0.0;
 
-    // Arrival time at this airport in minutes.
     long long arrivalTime = 0;
 
-    // Previous label used for path reconstruction.
+    long long departureTime = 0;
+
+    int stops = 0;
+
     int previousLabel = -1;
 
-    // Flight used to reach this label.
     string flightId;
 
-    // A label can become dominated by a better label.
     bool active = true;
 };
 
-
-// A label A dominates label B when A is:
-// - no more expensive
-// - no later
-//
-// If both are true, B can never produce a better continuation.
 bool dominates(const Label& a, const Label& b) {
-
-    return a.cost <= b.cost
-        && a.arrivalTime <= b.arrivalTime;
+    return
+        a.cost <= b.cost &&
+        a.arrivalTime <= b.arrivalTime &&
+        a.stops <= b.stops;
 }
 
 } // namespace
@@ -116,29 +94,19 @@ bool dominates(const Label& a, const Label& b) {
 
 PathResult dijkstra(
     const Graph& graph,
-    const std::string& originId,
-    const std::string& destinationId,
-    WeightType weightType
+    const string& originId,
+    const string& destinationId,
+    WeightType weightType,
+    const RouteConstraints& constraints
 ) {
-
     PathResult result;
 
-    auto startTime =
-        chrono::high_resolution_clock::now();
+    auto startTime = chrono::high_resolution_clock::now();
 
     vector<Label> labels;
 
-    // Labels grouped by airport.
     unordered_map<string, vector<int>> labelsAtAirport;
 
-    /*
-     * Priority queue:
-     *
-     * The first value is the optimization cost.
-     *
-     * PRICE    → accumulated ticket price
-     * DURATION → accumulated flight duration
-     */
     using QueueEntry = pair<double, int>;
 
     priority_queue<
@@ -148,16 +116,26 @@ PathResult dijkstra(
     > pq;
 
 
-    // Starting label.
-    //
-    // LLONG_MIN means:
-    // "There is no previous flight, so connection time does not apply."
+    // ------------------------------------------------------------
+    // Start label
+    // ------------------------------------------------------------
+
     Label startLabel;
 
     startLabel.airport = originId;
+
     startLabel.cost = 0.0;
+
+    // Special value means:
+    // there is no previous flight, so the first flight
+    // does not need a connection-time check.
     startLabel.arrivalTime =
         numeric_limits<long long>::min();
+
+    startLabel.departureTime =
+        numeric_limits<long long>::min();
+
+    startLabel.stops = 0;
 
     labels.push_back(startLabel);
 
@@ -169,14 +147,19 @@ PathResult dijkstra(
     long long nodesExplored = 0;
 
 
+    // ------------------------------------------------------------
+    // Main multi-label Dijkstra
+    // ------------------------------------------------------------
+
     while (!pq.empty()) {
 
         auto [currentCost, labelId] = pq.top();
         pq.pop();
 
+        (void)currentCost;
+
         Label& current = labels[labelId];
 
-        // This label was dominated by another label.
         if (!current.active) {
             continue;
         }
@@ -184,17 +167,30 @@ PathResult dijkstra(
         nodesExplored++;
 
 
-        // Because the priority queue is ordered by optimization cost,
-        // the first active destination label is optimal for the
-        // selected WeightType.
+        // --------------------------------------------------------
+        // Destination reached
+        // --------------------------------------------------------
+
         if (current.airport == destinationId) {
 
             result.found = true;
+
             result.totalCost = current.cost;
 
+            result.stops = current.stops;
 
-            // Reconstruct airport path and flight path.
+            if (current.arrivalTime !=
+                numeric_limits<long long>::min()) {
+
+                result.totalTravelTimeMinutes =
+                    current.arrivalTime -
+                    current.departureTime;
+            }
+
+
+            // Reconstruct route.
             vector<string> reversedPath;
+
             vector<string> reversedFlights;
 
             int currentId = labelId;
@@ -223,16 +219,19 @@ PathResult dijkstra(
             );
 
             result.path = reversedPath;
+
             result.flightIds = reversedFlights;
 
             break;
         }
 
 
-        // Explore all flights leaving the current airport.
+        // --------------------------------------------------------
+        // Explore outgoing flights
+        // --------------------------------------------------------
+
         for (const auto& edge :
              graph.getEdges(current.airport)) {
-
 
             long long departureTime =
                 parseTimestamp(edge.departure);
@@ -240,33 +239,22 @@ PathResult dijkstra(
             long long arrivalTime =
                 parseTimestamp(edge.arrival);
 
-
-            // Invalid timestamp → cannot safely use this flight.
-            if (departureTime < 0 || arrivalTime < 0) {
+            if (departureTime < 0 ||
+                arrivalTime < 0) {
                 continue;
             }
 
 
-            /*
-             * Connection feasibility.
-             *
-             * For the starting airport:
-             *
-             *     no previous arrival
-             *     → any departure is allowed
-             *
-             * For connecting flights:
-             *
-             *     departure >= previous arrival + 60 minutes
-             */
-            if (
-                current.arrivalTime !=
-                numeric_limits<long long>::min()
-            ) {
+            // ----------------------------------------------------
+            // Connection-time constraint
+            // ----------------------------------------------------
+
+            if (current.arrivalTime !=
+                numeric_limits<long long>::min()) {
 
                 long long earliestDeparture =
-                    current.arrivalTime
-                    + MIN_CONNECTION_MINUTES;
+                    current.arrivalTime +
+                    MIN_CONNECTION_MINUTES;
 
                 if (departureTime < earliestDeparture) {
                     continue;
@@ -274,29 +262,125 @@ PathResult dijkstra(
             }
 
 
+            // ----------------------------------------------------
+            // Calculate cost
+            // ----------------------------------------------------
+
             double edgeWeight =
                 (weightType == WeightType::PRICE)
                     ? edge.price_inr
                     : edge.duration_minutes;
 
-
             double newCost =
                 current.cost + edgeWeight;
 
 
+            // ----------------------------------------------------
+            // Number of stops
+            //
+            // n flights => n - 1 stops
+            // ----------------------------------------------------
+
+            int newStops = current.stops;
+
+            if (current.previousLabel != -1) {
+                newStops++;
+            }
+
+            // ----------------------------------------------------
+            // HARD CONSTRAINT: maximum stops
+            // ----------------------------------------------------
+
+            if (constraints.maxStops >= 0 &&
+                newStops > constraints.maxStops){
+
+                continue;
+            }
+
+
+            // ----------------------------------------------------
+            // HARD CONSTRAINT: budget
+            // ----------------------------------------------------
+
+            if (constraints.maxBudget >= 0 &&
+                newCost > constraints.maxBudget) {
+
+                continue;
+            }
+
+
+            // ----------------------------------------------------
+            // Determine itinerary departure time.
+            //
+            // For the first flight this becomes the
+            // starting departure time.
+            // ----------------------------------------------------
+
+            long long itineraryDepartureTime =
+                current.departureTime;
+
+            if (itineraryDepartureTime ==
+                numeric_limits<long long>::min()) {
+
+                itineraryDepartureTime =
+                    departureTime;
+            }
+
+
+            // ----------------------------------------------------
+            // HARD CONSTRAINT: maximum travel time
+            //
+            // This is elapsed time:
+            //
+            // first departure -> final arrival
+            //
+            // so waiting/layovers are included.
+            // ----------------------------------------------------
+
+            long long elapsedTravelTime =
+                arrivalTime -
+                itineraryDepartureTime;
+
+            if (constraints.maxTravelTimeMinutes >= 0 &&
+                elapsedTravelTime >
+                    constraints.maxTravelTimeMinutes) {
+
+                continue;
+            }
+
+
+            // ----------------------------------------------------
+            // Candidate label
+            // ----------------------------------------------------
+
             Label candidate;
 
-            candidate.airport = edge.destination;
-            candidate.cost = newCost;
-            candidate.arrivalTime = arrivalTime;
-            candidate.previousLabel = labelId;
-            candidate.flightId = edge.flight_id;
+            candidate.airport =
+                edge.destination;
+
+            candidate.cost =
+                newCost;
+
+            candidate.arrivalTime =
+                arrivalTime;
+
+            candidate.departureTime =
+                itineraryDepartureTime;
+
+            candidate.stops =
+                newStops;
+
+            candidate.previousLabel =
+                labelId;
+
+            candidate.flightId =
+                edge.flight_id;
 
 
-            /*
-             * Check whether an existing label at the same airport
-             * already dominates this candidate.
-             */
+            // ----------------------------------------------------
+            // Dominance check
+            // ----------------------------------------------------
+
             bool candidateDominated = false;
 
             for (int existingId :
@@ -320,19 +404,22 @@ PathResult dijkstra(
             }
 
 
-            /*
-             * Candidate is useful.
-             *
-             * It may dominate some older labels.
-             */
+            // ----------------------------------------------------
+            // Add candidate label
+            // ----------------------------------------------------
+
             int newLabelId =
                 static_cast<int>(labels.size());
 
             labels.push_back(candidate);
 
+
+            // ----------------------------------------------------
+            // Remove labels dominated by candidate
+            // ----------------------------------------------------
+
             auto& destinationLabels =
                 labelsAtAirport[edge.destination];
-
 
             for (int existingId :
                  destinationLabels) {
@@ -340,19 +427,20 @@ PathResult dijkstra(
                 Label& existing =
                     labels[existingId];
 
-                if (
-                    existing.active
-                    && dominates(
+                if (existing.active &&
+                    dominates(
                         labels[newLabelId],
                         existing
-                    )
-                ) {
+                    )) {
+
                     existing.active = false;
                 }
             }
 
 
-            destinationLabels.push_back(newLabelId);
+            destinationLabels.push_back(
+                newLabelId
+            );
 
             pq.push({
                 newCost,
@@ -362,16 +450,20 @@ PathResult dijkstra(
     }
 
 
+    // ------------------------------------------------------------
+    // Benchmarking
+    // ------------------------------------------------------------
+
     auto endTime =
         chrono::high_resolution_clock::now();
 
-    result.nodesExplored = nodesExplored;
+    result.nodesExplored =
+        nodesExplored;
 
     result.runtimeMs =
         chrono::duration<double, milli>(
             endTime - startTime
         ).count();
-
 
     return result;
 }
